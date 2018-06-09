@@ -1,0 +1,31 @@
+{
+  "name": "clies6",
+  "version": "1.0.0",
+  "description": "Command line tool per leggere file csv",
+  "main": ".lib/app.js",
+  "scripts": {
+    "start": "babel-node --presets env ./src/app.js",
+    "build": "babel --presets env -d ./lib ./src",
+    "test": "eslint src && flow"
+  },
+  "author": "Paolo Senese <p.senese@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "csv": "^3.1.0",
+    "csv-parse": "^2.4.1"
+  },
+  "bin": {
+    "clies6": "./lib/app.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^4.19.1",
+    "eslint-plugin-flowtype": "^2.49.3",
+    "eslint-plugin-import": "^2.2.0",
+    "flow-bin": "^0.74.0"
+  }
+}
