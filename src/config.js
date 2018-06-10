@@ -1,6 +1,6 @@
 // @flow
 const config = {
-  sourceFilesPath: './files/source/',
+  sourceFilesPath: './files/origin/',
   destinationFilesPath: './files/destination/',
   delimiter: ',',
 }
