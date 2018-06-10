@@ -3,10 +3,10 @@
 import fs from 'fs'
 import program from 'commander'
 import colors from 'colors'
-import async from 'async'
 import inquirer from 'inquirer'
 import config from './config'
-import { checkOccurence, processFiles, questions } from './utils'
+import { startProcess } from './startprocess'
+import { checkOccurence, processFiles, questions, questionsCheck, readdirAsync,deleteFile } from './utils'
 
 program
     .command('check')
@@ -66,50 +66,35 @@ program
     .description('Esegue elaborazione files')
     .action(() => {
       
-      inquirer
-        .prompt(questions)
-        .then(function (answers) {
-          if (answers.operation != 'Tutti') {
-            console.log(colors.green(`************************ ${answers.operation} files ************************`))
-            console.log('\n')
-            processFiles(config.sourceFilesPath, answers.operation).then((result) => {
-              console.log('\n')
-              if (result.succeed) {
-                console.log('%s %s %s', 'File', colors.green(result.fileType), result.message);
-              } else {
-                console.log(colors.red(result.message));
-              }
-              console.log('\n')
-              console.log(colors.green('---------------------------------------------------------------'))
+      readdirAsync(config.destinationFilesPath).then((filenames) => {
+          if (filenames.length !=0) {
+            let filesPath = []
+            filenames.forEach((item) => {
+              filesPath.push(config.destinationFilesPath + item)
             })
+            inquirer
+              .prompt(questionsCheck)
+              .then(function (answers) {
+                if (answers.check == 'Sì') {
+                  return Promise.all(filesPath.map(deleteFile));
+                } else {
+                  return Promise.all([]);
+                }
+              }).then((files) => {
+                if (files.length != 0) {
+                  console.log('\n')
+                  console.log('Elenco file cancellati');
+                  files.forEach((item) => {
+                    console.log(item);
+                  })
+                  console.log('\n')
+                }
+                startProcess()
+              })
           } else {
-           console.log(colors.green('************************ Android files ************************'))
-           console.log('\n')
-           processFiles(config.sourceFilesPath, 'Android').then((result) => {
-             console.log('\n')
-             if (result.succeed) {
-               console.log('%s %s %s', 'File', colors.green(result.fileType), result.message);
-             } else {
-               console.log(colors.red(result.message));
-             }
-             console.log('\n')
-             console.log(colors.green('---------------------------------------------------------------'))
-             console.log('\n')
-           }).then(() => {
-             console.log(colors.green('************************** iOs files **************************'))
-             console.log('\n')
-             processFiles(config.sourceFilesPath, 'iOs').then((result) => {
-               if (result.succeed) {
-                 console.log('%s %s %s', 'File', colors.green(result.fileType), result.message);
-               } else {
-                 console.log(colors.red(result.message));
-               }
-               console.log('\n')
-               console.log(colors.green('---------------------------------------------------------------'))
-             })
-           })
+            startProcess()
           }
-        })
+      })
     })
     
 program.parse(process.argv)
