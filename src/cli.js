@@ -4,13 +4,11 @@ import parse from 'csv-parse'
 
 export default class Cli {
   readFiles(inputFile: string, delimiter: string, callback: Function) {
-    console.log(inputFile)
-    
     const parser = parse({ delimiter: delimiter }, (err, data) => {
       if (err) {
         console.log('Error')
       } else {
-        //console.log(`file: ${inputFile}, righe: ${data.length}`)
+        console.log(`lettura file: ${inputFile}, righe: ${data.length}`)
         let arrayList = []
         
         let header = []

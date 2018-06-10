@@ -70,79 +70,46 @@ program
         .prompt(questions)
         .then(function (answers) {
           if (answers.operation != 'Tutti') {
-            processFiles(config.sourceFilesPath, answers.operation)
-          } else {
-            var promisesToMake = [processFiles(config.sourceFilesPath, 'Android'), processFiles(config.sourceFilesPath, 'iOs')];
-            var promises = Promise.all(promisesToMake);
-
-            promises.then(function(results) {
-             console.log('promises', results);
-            });
-          }
-        });
-      
-      /*readdirAsync(config.sourceFilesPath).then(function (filenames){
-          let filesPath = []
-          filenames.forEach((item) => {
-            filesPath.push(config.sourceFilesPath + item)
-          })
-          return Promise.all(filesPath.map(getFile));
-      }).then(function (files){
-          var summaryFiles = [];
-          files.forEach(function(file, i) {
-            file.forEach(function(row, i) {
-              summaryFiles.push(row)
-            })
-          });
-          
-          summaryFiles = summaryFiles.sort((a,b) => {
-            return new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime();
-          });
-          
-          fs.appendFile("./files/destination/result.json", JSON.stringify(summaryFiles, null, 4), function(err) {
-              if(err) {
-                return console.log(err);
+            console.log(colors.green(`************************ ${answers.operation} files ************************`))
+            console.log('\n')
+            processFiles(config.sourceFilesPath, answers.operation).then((result) => {
+              console.log('\n')
+              if (result.succeed) {
+                console.log('%s %s %s', 'File', colors.green(result.fileType), result.message);
+              } else {
+                console.log(colors.red(result.message));
               }
-              console.log("The file was appended!");
-          });
-          console.log(summaryFiles);
-      });*/
-      
-        /*fs.readdir(config.sourceFilesPath, (err, files) => {
-          
-          //if (files.length % 2 === 0) {
-          let androidFileList = []
-          let iOsFileList = []
-          files.forEach((file) => {
-            if (file.indexOf('Android') != -1) {
-              androidFileList.push(file)
-            } else if (file.indexOf('iOs') != -1) {
-              iOsFileList.push(file)
-            }
-            //const execute = new Cli()
-            //execute.readFiles(config.sourceFilesPath + file, config.delimiter)
-          })
-          
-          console.log(androidFileList)
-          console.log(iOsFileList)
-          
-          var done = function(err, result) {
-            if (err) console.log(err)
-            console.log('processed successfully', result);
-          };
-
-          async.waterfall([
-            readFiles(androidFileList),
-            function2,
-            function3
-            //readFiles(iOsFileList),
-            //writeFiles
-          ], done);
-          
-          //} else {
-//            console.log('Missing files')
-          //}
-        })*/
+              console.log('\n')
+              console.log(colors.green('---------------------------------------------------------------'))
+            })
+          } else {
+           console.log(colors.green('************************ Android files ************************'))
+           console.log('\n')
+           processFiles(config.sourceFilesPath, 'Android').then((result) => {
+             console.log('\n')
+             if (result.succeed) {
+               console.log('%s %s %s', 'File', colors.green(result.fileType), result.message);
+             } else {
+               console.log(colors.red(result.message));
+             }
+             console.log('\n')
+             console.log(colors.green('---------------------------------------------------------------'))
+             console.log('\n')
+           }).then(() => {
+             console.log(colors.green('************************** iOs files **************************'))
+             console.log('\n')
+             processFiles(config.sourceFilesPath, 'iOs').then((result) => {
+               if (result.succeed) {
+                 console.log('%s %s %s', 'File', colors.green(result.fileType), result.message);
+               } else {
+                 console.log(colors.red(result.message));
+               }
+               console.log('\n')
+               console.log(colors.green('---------------------------------------------------------------'))
+             })
+           })
+          }
+        })
     })
     
 program.parse(process.argv)
