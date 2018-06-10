@@ -1,9 +1,11 @@
 # cli-es6
 Command line tool that read csv
 
-# Requisiti
+Requisiti
+-----------
 
-# Utilizzo
+Utilizzo
+-----------
 
 Usage: cli-es6 [options] [command]
 
