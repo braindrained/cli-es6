@@ -39,13 +39,11 @@ Installazione, test, build
 Utilizzo
 -----------
 
-Usage: cli-es6 [options] [command]
-
-Options:
-
-  -h, --help  output usage information
-
-Commands:
-
-  check|ck    Controlla lista dei files
-  run|r       Esegue elaborazione files
+1. Help:
+        $ cli-es6 --help
+        
+2. Check:
+        $ cli-es6 check
+        
+1. Run:
+        $ cli-es6 run
