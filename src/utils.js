@@ -27,7 +27,7 @@ const deleteFilesAsync = ((dirname: string) => {
 })
 
 export const deleteFile = ((filename: string) => {
-  return deleteFilesAsync(filename, 'utf8');
+  return deleteFilesAsync(filename);
 })
 
 export const readdirAsync = ((dirname: string) => {
@@ -76,7 +76,9 @@ const convertCollectionToCsv = ((docs, rowWithMoreColumns) => {
     var values = [];
     
     console.log(keys.length, rowWithMoreColumns.rowLength);
-  
+    
+    // TO DO se colonne < rowLength spostare ultima colonna
+    
     keys.forEach((item) => {
       if (isNormalInteger(obj[item].toString()) || obj[item] == "") {
         values.push(obj[item])
@@ -88,9 +90,12 @@ const convertCollectionToCsv = ((docs, rowWithMoreColumns) => {
     return values;
   })
     
-  let body = docs.map(convertObjectsToCsv);
+  let body = docs.map(convertObjectsToCsv)
+  // flow-disable-next-line
+  let header = Object.keys(rowWithMoreColumns.row).join(",")
+  
   let csv = []
-    .concat([Object.keys(rowWithMoreColumns.row).join(",")])
+    .concat([])
     .concat(body)
     .join('\n');
 
@@ -132,15 +137,17 @@ export const processFiles = ((sourceFilesPath: string, fileType: string) => {
         })
         
         try {
-          
-          let csv = convertCollectionToCsv(summaryFiles, rowWithMoreColumns)
-          
-          fs.appendFile(`./files/destination/result${fileType}.csv`, csv, function(err) {
-              if (err)
-                  reject({ succeed: false, fileType: fileType, message: err})
-              else 
-                  resolve({ succeed: true, fileType: fileType, message: 'creato con successo'})
-          })
+          if (summaryFiles.length > 0) {
+            let csv = convertCollectionToCsv(summaryFiles, rowWithMoreColumns)
+            
+            // flow-disable-next-line
+            fs.appendFile(`./files/destination/result${fileType}.csv`, csv, function(err) {
+                if (err)
+                    reject({ succeed: false, fileType: fileType, message: err})
+                else 
+                    resolve({ succeed: true, fileType: fileType, message: 'creato con successo'})
+            })
+          }
         } catch (e) {
           reject({ succeed: false, fileType: fileType, message: e})
         }
