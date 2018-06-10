@@ -39,6 +39,10 @@ Installazione, test, build
 Utilizzo
 -----------
 
+Creare la cartella files contentente le due cartelle origin e destination.
+Copiare nella cartella origin i file da elaborare.
+Eseguire i seguenti comandi:
+
 1. Help:
 
         $ cli-es6 --help
