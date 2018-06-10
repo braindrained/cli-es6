@@ -39,11 +39,12 @@ Installazione, test, build
 Utilizzo
 -----------
 
-1. Help:
+1. Installazione:
+
         $ cli-es6 --help
         
 2. Check:
         $ cli-es6 check
         
-1. Run:
+3. Run:
         $ cli-es6 run
