@@ -9,7 +9,7 @@ Requisiti di sistema
 2. Installa Yarn.
    https://yarnpkg.com/en/docs/install
 
-Installazione, test, build
+Installazione, controllo codice, build
 ----------
 
 1. Installa dipendenze:
@@ -24,9 +24,9 @@ Installazione, test, build
 
         $ yarn start run
 
-4. Esegui flow:
+4. Controllo codice:
 
-        $ yarn flow
+        $ yarn test
 
 5. Esegui build:
 
@@ -45,7 +45,9 @@ Eseguire i seguenti comandi:
 
 1. Help:
 
-        $ cli-es6 --help
+        $ cli-es6 -help
+        //oppure
+        $ cli-es6 -h
         
 2. Check:
 
