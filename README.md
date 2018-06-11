@@ -36,23 +36,23 @@ Installazione, controllo codice, build
 
         $ npm install -g
 
-Utilizzo
+Utilizzo una volta installato
 -----------
 
 Creare la cartella files contentente le due cartelle origin e destination.
 Copiare nella cartella origin i file da elaborare.
 Eseguire i seguenti comandi:
 
-1. Help:
+1. Help ritorna la lista dei comandi eseguibili:
 
         $ cli-es6 -help
         //oppure
         $ cli-es6 -h
         
-2. Check:
+2. Check verifica i files nelle directory:
 
         $ cli-es6 check
         
-3. Run:
+3. Run esegue programma:
 
         $ cli-es6 run
