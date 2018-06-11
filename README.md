@@ -24,9 +24,9 @@ Installazione, test, build
 
         $ yarn start run
 
-4. Esegui flow:
+4. Esegui test:
 
-        $ yarn flow
+        $ yarn test
 
 5. Esegui build:
 

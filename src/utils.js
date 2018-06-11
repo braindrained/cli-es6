@@ -1,17 +1,15 @@
 // @flow
 import fs from 'fs'
+import colors from 'colors'
 import config from './config'
-import Cli from './cli'
+import { elaborateFile } from './elaboratefile'
 
 export const checkOccurence = ((array: Array<string>, value: string) => {
   return array.filter((val) => { return val === value }).length
 })
 
-export const questionsCheck = [
-  { type: 'list', name: 'check', message: 'la cartella di destinazione non è vuota, cancellare i file presenti?', choices: ['Sì', 'No'] }
-]
-
 export const questions = [
+  { type: 'list', name: 'check', message: 'la cartella di destinazione non è vuota, cancellare i file presenti?', choices: ['Sì', 'No'] },
   { type: 'list', name: 'operation', message: 'Scegli file da processare', choices: ['Android', 'iOs', 'Tutti'] }
 ]
 
@@ -27,7 +25,7 @@ const deleteFilesAsync = ((dirname: string) => {
 })
 
 export const deleteFile = ((filename: string) => {
-  return deleteFilesAsync(filename);
+  return deleteFilesAsync(filename)
 })
 
 export const readdirAsync = ((dirname: string) => {
@@ -41,45 +39,45 @@ export const readdirAsync = ((dirname: string) => {
     }))
 })
 
-const readFileAsync = ((filename: string, enc: string) => {
+const readFileAsync = ((filename: string) => {
     return new Promise(((resolve, reject) => {
-      const execute = new Cli()
-      execute.readFiles(filename, config.delimiter, ((err, data) => {
+      elaborateFile(filename, config.delimiter, ((err, data) => {
           if (err) 
-              reject(err); 
+              reject(err)
           else
-              resolve(data);
+              resolve(data)
       }))
     }))
 })
 
 const getFile = ((filename: string) => {
-  return readFileAsync(filename, 'utf8');
+  return readFileAsync(filename)
 })
 
 const convertCollectionToCsv = ((docs, rowWithMoreColumns) => {
   if (!(Array.isArray(docs) && docs.length > 0)) {
-    return;
+    return
   }
 
   const convertObjectsToCsv = ((doc) => {
-    var values = getValuesFromObject(doc);
-    return values.join(',');
+    var values = getValuesFromObject(doc)
+    return values.join(',')
   })
 
   const getValuesFromObject = ((obj) => {
     if (typeof obj !== 'object' || obj === null) {
-      return [];
+      return []
     }
 
-    var keys = Object.keys(obj);
-    var values = [];
-    
-    console.log(keys.length, rowWithMoreColumns.rowLength);
-    
-    // TO DO se colonne < rowLength spostare ultima colonna
+    var keys = Object.keys(obj)
+    var values = []
     
     keys.forEach((item) => {
+      if(item == 'Publisher' && keys.length < rowWithMoreColumns.rowLength){
+        for (var i = 0, len = (rowWithMoreColumns.rowLength - keys.length); i < len; i++) {
+          values.push(null)
+        }
+      }
       if (isNormalInteger(obj[item].toString()) || obj[item] == "") {
         values.push(obj[item])
       } else {
@@ -87,27 +85,44 @@ const convertCollectionToCsv = ((docs, rowWithMoreColumns) => {
       }
     })
 
-    return values;
+    return values
   })
     
   let body = docs.map(convertObjectsToCsv)
+  
   // flow-disable-next-line
   let header = Object.keys(rowWithMoreColumns.row).join(",")
   
   let csv = []
-    .concat([])
+    .concat([header])
     .concat(body)
-    .join('\n');
+    .join('\n')
 
-  return csv;
+  return csv
 })
 
 const isNormalInteger = ((str) => {
-    var n = Math.floor(Number(str));
-    return n !== Infinity && String(n) === str && n >= 0;
+    var n = Math.floor(Number(str))
+    return n !== Infinity && String(n) === str && n >= 0
 })
 
-export const processFiles = ((sourceFilesPath: string, fileType: string) => {
+export const elaborateByType = ((sourceFilesPath: string, fileType: string) => {
+  return new Promise(((resolve, reject) => {
+    console.log(colors.blue(`************************ ${fileType} files ************************\n`))
+    processFiles(sourceFilesPath, fileType).then((result) => {
+      console.log('\n')
+      if (result.succeed) {
+        console.log('%s %s %s', 'File', colors.blue(result.fileType), result.message)
+      } else {
+        console.log(colors.red(result.message))
+      }
+      console.log(colors.blue('\n---------------------------------------------------------------'))
+      resolve()
+    })
+  }))
+})
+
+const processFiles = ((sourceFilesPath: string, fileType: string) => {
   return new Promise(((resolve, reject) => {
     readdirAsync(sourceFilesPath).then((filenames) => {
         let filesPath = []
@@ -120,8 +135,8 @@ export const processFiles = ((sourceFilesPath: string, fileType: string) => {
             resolve({ succeed: false, fileType: fileType, message: 'non sono presenti file'})
         return Promise.all(filesPath.map(getFile))
     }).then((files) => {
-        let summaryFiles = [];
-        let rowWithMoreColumns = { rowLength: 0, row: [] };
+        let summaryFiles = []
+        let rowWithMoreColumns = { rowLength: 0, row: [] }
         files.forEach((file, i) => {
           file.forEach((row, i) => {
             if (Object.keys(row).length > rowWithMoreColumns.rowLength) {
@@ -133,20 +148,23 @@ export const processFiles = ((sourceFilesPath: string, fileType: string) => {
         })
         
         summaryFiles = summaryFiles.sort((a,b) => {
-          return new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime();
+          return new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime()
         })
         
         try {
           if (summaryFiles.length > 0) {
             let csv = convertCollectionToCsv(summaryFiles, rowWithMoreColumns)
             
-            // flow-disable-next-line
-            fs.appendFile(`./files/destination/result${fileType}.csv`, csv, function(err) {
-                if (err)
-                    reject({ succeed: false, fileType: fileType, message: err})
-                else 
-                    resolve({ succeed: true, fileType: fileType, message: 'creato con successo'})
-            })
+            if (csv) {
+              fs.appendFile(`./files/destination/result${fileType}.csv`, csv, function(err) {
+                  if (err)
+                      reject({ succeed: false, fileType: fileType, message: err})
+                  else 
+                      resolve({ succeed: true, fileType: fileType, message: 'creato con successo'})
+              })              
+            } else {
+              reject({ succeed: false, fileType: fileType, message: 'errore'})
+            }
           }
         } catch (e) {
           reject({ succeed: false, fileType: fileType, message: e})

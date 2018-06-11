@@ -6,7 +6,7 @@ import colors from 'colors'
 import inquirer from 'inquirer'
 import config from './config'
 import { startProcess } from './startprocess'
-import { checkOccurence, processFiles, questions, questionsCheck, readdirAsync,deleteFile } from './utils'
+import { checkOccurence, questions, readdirAsync,deleteFile } from './utils'
 
 program
     .command('check')
@@ -73,23 +73,25 @@ program
               filesPath.push(config.destinationFilesPath + item)
             })
             inquirer
-              .prompt(questionsCheck)
+              .prompt(questions[0])
               .then(function (answers) {
                 if (answers.check == 'Sì') {
-                  return Promise.all(filesPath.map(deleteFile));
+                  return Promise.all(filesPath.map(deleteFile))
                 } else {
-                  return Promise.all([]);
+                  return Promise.all([])
                 }
               }).then((files) => {
                 if (files.length != 0) {
                   console.log('\n')
-                  console.log('Elenco file cancellati');
+                  console.log('Elenco file cancellati')
                   files.forEach((item) => {
-                    console.log(item);
+                    console.log(item)
                   })
                   console.log('\n')
+                  startProcess()
+                } else {
+                  process.exit()
                 }
-                startProcess()
               })
           } else {
             startProcess()
