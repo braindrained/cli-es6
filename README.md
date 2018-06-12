@@ -40,7 +40,7 @@ Installazione, controllo codice, build
 Utilizzo una volta installato
 -----------
 
-Creare la cartella files contentente le due cartelle origin e destination.
+Creare la cartella files contenente le due cartelle origin e destination.
 
 Copiare nella cartella origin i file da elaborare.
 
