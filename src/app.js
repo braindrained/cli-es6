@@ -16,42 +16,30 @@ program
     try {
       fs.readdir(config.sourceFilesPath, (err, files) => {
         if (err) {
-          console.log(colors.red('**************************** Error ****************************'))
-          console.log('\n')
+          console.log(colors.red('**************************** Error ****************************\n'))
           console.log(`errore nella lettura della cartella ${config.sourceFilesPath}`)
           console.log(err)
-          console.log('\n')
-          console.log(colors.red('***************************************************************'))
+          console.log(colors.red('\n***************************************************************'))
         } else {
           if (files.length % 2 === 0 && files.length != 0) {
-            console.log(colors.blue('************************ Elernco files ************************'))
-            console.log('\n')
-            let deviceFileList = []
+            console.log(colors.blue('************************ Elernco files ************************\n'))
             files.forEach((file, i) => {
               let deviceFile = file.indexOf('Android') != -1 ? 'Android' : file.indexOf('iOs') != -1 ? 'iOs' : 'unknown'
               console.log('%s %s %s %s %s', colors.bold(i+1), '-', colors.blue(deviceFile) , '-', colors.blue(file))
-              deviceFileList.push(deviceFile)
             })
-            console.log('\n')
-
-            console.log(colors.blue('---------------------------------------------------------------'))
-            console.log('\n')
+            console.log(colors.blue('\n---------------------------------------------------------------\n'))
             console.log('Files Android:', colors.yellow(checkOccurence(files, 'Android').length))
             console.log('Files iOs:', colors.yellow(checkOccurence(files, 'iOs').length))
             console.log('Files Sconosciuti:', colors.yellow(checkOccurence(files, 'unknown').length))
-            console.log('\n')
-            console.log(colors.blue('---------------------------------------------------------------'))
-            
+            console.log(colors.blue('\n---------------------------------------------------------------'))
           } else {
-            console.log(colors.red('**************************** Error ****************************'))
-            console.log('\n')
+            console.log(colors.red('**************************** Error ****************************\n'))
             if (files.length == 0) {
               console.log(`Non sono presenti files, controlla il contenuto della cartella ${config.sourceFilesPath}`)
             } else if (!(files.length % 2 === 0)) {
               console.log(`I files non sono pari, controlla il contenuto della cartella ${config.sourceFilesPath}`)
             }
-            console.log('\n')
-            console.log(colors.red('***************************************************************'))
+            console.log(colors.red('\n***************************************************************'))
           }            
         }
       })        
