@@ -5,7 +5,7 @@ import config from './config'
 import { elaborateFile } from './elaboratefile'
 
 export const checkOccurence = ((array: Array<string>, value: string) => {
-  return array.filter((val) => { return val === value }).length
+  return array.filter((val) => { return val.indexOf(value) != -1 })
 })
 
 export const questions = [
@@ -13,7 +13,7 @@ export const questions = [
   { type: 'list', name: 'operation', message: 'Scegli file da processare', choices: ['Android', 'iOs', 'Tutti'] }
 ]
 
-const deleteFilesAsync = ((dirname: string) => {
+export const deleteFilesAsync = ((dirname: string) => {
   return new Promise(((resolve, reject) => {
     fs.unlink((dirname), err => {
         if (err) 
@@ -31,10 +31,15 @@ export const deleteFile = ((filename: string) => {
 export const readdirAsync = ((dirname: string) => {
     return new Promise(((resolve, reject) => {
         fs.readdir(dirname, (err, filenames) => {
-            if (err) 
+            if (err) {
                 reject(err)
-            else 
-                resolve(filenames)
+            } else {
+              let filesPath = []
+              filenames.forEach((file) => {
+                filesPath.push(dirname + file)
+              })
+              resolve(filesPath)
+            }
         })
     }))
 })
@@ -125,12 +130,7 @@ export const elaborateByType = ((sourceFilesPath: string, fileType: string) => {
 const processFiles = ((sourceFilesPath: string, fileType: string) => {
   return new Promise(((resolve, reject) => {
     readdirAsync(sourceFilesPath).then((filenames) => {
-        let filesPath = []
-        filenames.forEach((item) => {
-          if (item.indexOf(fileType) != -1) {
-            filesPath.push(sourceFilesPath + item)
-          }
-        })
+        let filesPath = checkOccurence(filenames, fileType)
         if (filesPath.length == 0)
             resolve({ succeed: false, fileType: fileType, message: 'non sono presenti file'})
         return Promise.all(filesPath.map(getFile))
