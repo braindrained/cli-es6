@@ -1,6 +1,8 @@
 // @flow
 import fs from 'fs'
 import colors from 'colors'
+import inquirer from 'inquirer'
+import child_process from 'child_process'
 import config from './config'
 import { elaborateFile } from './elaboratefile'
 
@@ -11,7 +13,8 @@ export const checkOccurence = ((array: Array<string>, value: string) => {
 
 export const questions = [
   { type: 'list', name: 'check', message: 'la cartella di destinazione non è vuota, cancellare i file presenti?', choices: ['Sì', 'No'] },
-  { type: 'list', name: 'operation', message: 'Scegli file da processare', choices: ['Android', 'iOs', 'Tutti'] }
+  { type: 'list', name: 'operation', message: 'Scegli file da processare', choices: ['Android', 'iOs', 'Tutti'] },
+  { type: 'list', name: 'check', message: 'Le cartelle non esistono, vuoi crearle?', choices: ['Sì', 'No'] }
 ]
 
 export const deleteFilesAsync = ((dirname: string) => {
@@ -157,7 +160,7 @@ const processFiles = ((sourceFilesPath: string, fileType: string) => {
             let csv = convertCollectionToCsv(summaryFiles, rowWithMoreColumns)
             
             if (csv) {
-              fs.appendFile(`./files/destination/result${fileType}.csv`, csv, function(err) {
+              fs.appendFile(`${config.destinationFilesPath}result${fileType}.csv`, csv, function(err) {
                   if (err)
                       reject({ succeed: false, fileType: fileType, message: err})
                   else 
@@ -174,4 +177,23 @@ const processFiles = ((sourceFilesPath: string, fileType: string) => {
       reject({ succeed: false, fileType: fileType, message: e})
     })
   }))
+})
+
+export const createOnError = ((err: Object, path: string) => {
+  console.log(colors.red('**************************** Error ****************************\n'))
+  console.log(`Errore nella lettura della cartella ${path}\n`)
+  console.log(err)
+  console.log(colors.red('\n***************************************************************'))
+  inquirer
+    .prompt(questions[2])
+    .then(function (answers) {
+      if (answers.check == 'Sì') {
+        child_process.exec('mkdir files files/origin files/destination', ((err, stdout, stderr) => {
+          if (err) {
+              console.log(`Child processes failed with error code: ${err}`)
+          }
+          console.log('Cartelle create correttamente, inserisci i files csv nella cartella origin e riesegui il programma')
+        }))
+      }
+    })
 })

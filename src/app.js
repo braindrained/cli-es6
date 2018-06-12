@@ -6,7 +6,7 @@ import colors from 'colors'
 import inquirer from 'inquirer'
 import config from './config'
 import { startProcess } from './startprocess'
-import { checkOccurence, questions, readdirAsync, deleteFile } from './utils'
+import { checkOccurence, questions, readdirAsync, deleteFile, createOnError } from './utils'
 
 program
   .command('check')
@@ -16,10 +16,7 @@ program
     try {
       fs.readdir(config.sourceFilesPath, (err, files) => {
         if (err) {
-          console.log(colors.red('**************************** Error ****************************\n'))
-          console.log(`errore nella lettura della cartella ${config.sourceFilesPath}`)
-          console.log(err)
-          console.log(colors.red('\n***************************************************************'))
+          createOnError(err, config.sourceFilesPath)
         } else {
           if (files.length % 2 === 0 && files.length != 0) {
             console.log(colors.blue('************************ Elernco files ************************\n'))
@@ -54,33 +51,38 @@ program
   .description('Esegue elaborazione files')
   .action(() => {
     
-    readdirAsync(config.destinationFilesPath).then((filenames) => {
-      if (filenames.length !=0) {
-        inquirer
-          .prompt(questions[0])
-          .then(function (answers) {
-            if (answers.check == 'Sì') {
-              return Promise.all(filenames.map(deleteFile))
-            } else {
-              return Promise.all([])
-            }
-          }).then((files) => {
-            if (files.length != 0) {
-              console.log('\nElenco file cancellati')
-              files.forEach((item) => {
-                console.log(item)
-              })
-              console.log('\n')
-              startProcess()
-            } else {
-              process.exit()
-            }
-          })
-      } else {
-        startProcess()
-      }
-    })
-    
+    try {
+      readdirAsync(config.destinationFilesPath).then((filenames) => {
+        if (filenames.length !=0) {
+          inquirer
+            .prompt(questions[0])
+            .then(function (answers) {
+              if (answers.check == 'Sì') {
+                return Promise.all(filenames.map(deleteFile))
+              } else {
+                return Promise.all([])
+              }
+            }).then((files) => {
+              if (files.length != 0) {
+                console.log('\nElenco file cancellati')
+                files.forEach((item) => {
+                  console.log(item)
+                })
+                console.log('\n')
+                startProcess()
+              } else {
+                process.exit()
+              }
+            })
+        } else {
+          startProcess()
+        }
+      }).catch((err) => {
+        createOnError(err, config.destinationFilesPath)
+      })
+    } catch (e) {
+      console.log(colors.red('Error: '), e)
+    }
   })
     
 program.parse(process.argv)
