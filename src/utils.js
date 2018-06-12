@@ -5,6 +5,7 @@ import config from './config'
 import { elaborateFile } from './elaboratefile'
 
 export const checkOccurence = ((array: Array<string>, value: string) => {
+  // flow-disable-next-line
   return array.filter((val) => { return val.indexOf(value) != -1 })
 })
 
