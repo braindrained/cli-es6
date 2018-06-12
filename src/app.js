@@ -30,7 +30,7 @@ program
             console.log('Files Sconosciuti:', colors.yellow(checkOccurence(files, 'unknown').length))
             console.log(colors.blue('\n---------------------------------------------------------------'))
           } else {
-            console.log(colors.red('**************************** Error ****************************\n'))
+            console.log(colors.red('**************************** Warning ****************************\n'))
             if (files.length == 0) {
               console.log(`Non sono presenti files, controlla il contenuto della cartella ${config.sourceFilesPath}`)
             } else if (!(files.length % 2 === 0)) {

@@ -31,10 +31,6 @@ export const elaborateFile = ((inputFile: string, delimiter: string, callback: F
           obj = Object.assign({},obj, {})
           
           delete obj["Params"]
-          
-          // add error to log
-        } finally {
-          
         }
         
         obj = Object.assign({},obj, { Publisher: inputFile.replace('./files/origin/', '').replace('.csv', '') })
