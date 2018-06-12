@@ -1,5 +1,5 @@
 # cli-es6
-Command line tool that read csv
+Command line tool per leggere file csv
 
 Requisiti di sistema
 -----------
