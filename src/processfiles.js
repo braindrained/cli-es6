@@ -12,8 +12,7 @@ export const processFiles = ((sourceFilesPath: string, fileType: string) => {
             resolve({ succeed: false, fileType: fileType, message: 'non sono presenti file'})
         return Promise.all(filesPath.map(getFile))        
       } catch (e) {
-        console.log(e);
-        reject({ succeed: false, fileType: fileType, message: e})
+        resolve({ succeed: false, fileType: fileType, message: e})
       }
     }).then((files) => {
         let summaryFiles = []

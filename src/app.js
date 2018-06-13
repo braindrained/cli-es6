@@ -21,7 +21,7 @@ program
           createOnError(err, config.sourceFilesPath)
         } else {
           if (files.length != 0) {
-            console.log(colors.blue('------------------------ Elernco files ------------------------\n'))
+            console.log(colors.blue(`------------------------ ${colors.white('Elenco files')} ------------------------\n`))
             files.forEach((file, i) => {
               let deviceFile = file.indexOf('Android') != -1 ? 'Android' : file.indexOf('iOs') != -1 ? 'iOs' : 'unknown'
               console.log('%s %s %s %s %s', colors.bold(i+1), '-', colors.yellow(deviceFile) , '-', colors.blue(file))
@@ -32,7 +32,7 @@ program
             console.log('Files Sconosciuti:', colors.yellow(checkOccurence(files, 'unknown').length))
             console.log(colors.blue('\n---------------------------------------------------------------'))
           } else {
-            console.log(colors.red('---------------------------- Warning ----------------------------\n'))
+            console.log(colors.red(`---------------------------- ${colors.white('Warning')} ----------------------------\n`))
             console.log(`Non sono presenti files, controlla il contenuto della cartella ${config.sourceFilesPath}`)
             console.log(colors.red('\n---------------------------------------------------------------'))
           }
@@ -53,15 +53,17 @@ program
       
       readdirAsync(config.sourceFilesPath).then((files) => {
         if (files.length != 0) {
-          console.log(colors.blue('------------------------ Elernco files ------------------------\n'))
+          console.log(colors.blue(`------------------------ ${colors.white('Elenco files')} ------------------------\n`))
+          let deviceFiles = []
           files.forEach((file, i) => {
             let deviceFile = file.indexOf('Android') != -1 ? 'Android' : file.indexOf('iOs') != -1 ? 'iOs' : 'unknown'
-            console.log('%s %s %s %s %s', colors.bold(i+1), '-', colors.blue(deviceFile) , '-', colors.blue(file))
+            deviceFiles.push(deviceFile)
+            console.log('%s %s %s %s %s', colors.bold(i+1), '-', colors.yellow(deviceFile) , '-', colors.blue(file))
           })
           console.log(colors.blue('\n---------------------------------------------------------------\n'))
-          console.log('Files Android:', colors.yellow(checkOccurence(files, 'Android').length))
-          console.log('Files iOs:', colors.yellow(checkOccurence(files, 'iOs').length))
-          console.log('Files Sconosciuti:', colors.yellow(checkOccurence(files, 'unknown').length))
+          console.log('Files Android:', colors.yellow(checkOccurence(deviceFiles, 'Android').length))
+          console.log('Files iOs:', colors.yellow(checkOccurence(deviceFiles, 'iOs').length))
+          console.log('Files Sconosciuti:', colors.yellow(checkOccurence(deviceFiles, 'unknown').length))
           console.log(colors.blue('\n---------------------------------------------------------------'))
           
           readdirAsync(config.destinationFilesPath).then((filenames) => {
@@ -91,10 +93,10 @@ program
             }
           }).catch((err) => {
             createOnError(err, config.destinationFilesPath)
-          })          
+          })
           
         } else {
-          console.log(colors.red('---------------------------- Warning ----------------------------\n'))
+          console.log(colors.red(`---------------------------- ${colors.white('Warnin')} ----------------------------\n`))
           console.log(`Non sono presenti files, controlla il contenuto della cartella ${config.sourceFilesPath}`)
           console.log(colors.red('\n---------------------------------------------------------------'))
         }

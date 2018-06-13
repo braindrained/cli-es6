@@ -118,7 +118,7 @@ const isNormalInteger = ((str) => {
 
 export const elaborateByType = ((sourceFilesPath: string, fileType: string) => {
   return new Promise(((resolve, reject) => {
-    console.log(colors.blue(`------------------------ ${colors.yellow(fileType + ' files')} -----------------------*\n`))
+    console.log(colors.blue(`------------------------ ${colors.white(fileType + ' files')} ------------------------\n`))
     processFiles(sourceFilesPath, fileType).then((result) => {
       console.log('\n')
       if (result.succeed) {
@@ -133,7 +133,7 @@ export const elaborateByType = ((sourceFilesPath: string, fileType: string) => {
 })
 
 export const createOnError = ((err: Object, path: string) => {
-  console.log(colors.red('---------------------------- Error ----------------------------\n'))
+  console.log(colors.red(`---------------------------- ${colors.white('Error')} ----------------------------\n`))
   console.log(`Errore nella lettura della cartella ${path}\n`)
   console.log(err)
   console.log(colors.red('\n---------------------------------------------------------------'))
