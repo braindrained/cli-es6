@@ -20,10 +20,14 @@ Installazione, controllo codice, build
 2. Esegui check in ambiente di sviluppo:
 
         $ yarn start check
+        // oppure 
+        $ yarn start ck
 
 3. Esegui elaborazione files in ambiente di sviluppo:
 
         $ yarn start run
+        // oppure 
+        $ yarn start r
 
 4. Controllo codice:
 
