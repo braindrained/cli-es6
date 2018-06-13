@@ -1,5 +1,5 @@
 # cli-es6
-Command line tool that read csv
+Command line tool per leggere file csv
 
 Requisiti di sistema
 -----------
@@ -12,15 +12,16 @@ Requisiti di sistema
 Installazione, controllo codice, build
 ----------
 
-1. Installa dipendenze:
-
+1. Clona progetto e installa dipendenze:
+         
+        $ git clone git@github.com:braindrained/cli-es6.git cli-es6
         $ yarn
 
 2. Esegui check in ambiente di sviluppo:
 
         $ yarn start check
 
-3. Esegui in ambiente di sviluppo:
+3. Esegui elaborazione files in ambiente di sviluppo:
 
         $ yarn start run
 
@@ -39,8 +40,10 @@ Installazione, controllo codice, build
 Utilizzo una volta installato
 -----------
 
-Creare la cartella files contentente le due cartelle origin e destination.
+Creare la cartella files contenente le due cartelle origin e destination.
+
 Copiare nella cartella origin i file da elaborare.
+
 Eseguire i seguenti comandi:
 
 1. Help ritorna la lista dei comandi eseguibili:
