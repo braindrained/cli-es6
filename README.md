@@ -51,7 +51,7 @@ Creare la cartella **files** contenente le due cartelle **origin** e **destinati
 
 Copiare nella cartella origin i file da elaborare.
 
-Eseguire i seguenti comandi:
+Descrizione comandi:
 
 1. Help ritorna la lista dei comandi eseguibili:
 
