@@ -5,6 +5,7 @@ import inquirer from 'inquirer'
 import child_process from 'child_process'
 import config from './config'
 import { elaborateFile } from './elaboratefile'
+import { processFiles } from './processfiles'
 
 export const checkOccurence = ((array: Array<string>, value: string) => {
   // flow-disable-next-line
@@ -59,11 +60,11 @@ const readFileAsync = ((filename: string) => {
     }))
 })
 
-const getFile = ((filename: string) => {
+export const getFile = ((filename: string) => {
   return readFileAsync(filename)
 })
 
-const convertCollectionToCsv = ((docs, rowWithMoreColumns) => {
+export const convertCollectionToCsv = ((docs, rowWithMoreColumns) => {
   if (!(Array.isArray(docs) && docs.length > 0)) {
     return
   }
@@ -117,13 +118,13 @@ const isNormalInteger = ((str) => {
 
 export const elaborateByType = ((sourceFilesPath: string, fileType: string) => {
   return new Promise(((resolve, reject) => {
-    console.log(colors.blue(`************************ ${fileType} files ************************\n`))
+    console.log(colors.blue(`------------------------ ${colors.yellow(fileType + ' files')} -----------------------*\n`))
     processFiles(sourceFilesPath, fileType).then((result) => {
       console.log('\n')
       if (result.succeed) {
         console.log('%s %s %s', 'File', colors.blue(result.fileType), result.message)
       } else {
-        console.log(colors.red(result.message))
+        console.log(result.message)
       }
       console.log(colors.blue('\n---------------------------------------------------------------'))
       resolve()
@@ -131,59 +132,11 @@ export const elaborateByType = ((sourceFilesPath: string, fileType: string) => {
   }))
 })
 
-const processFiles = ((sourceFilesPath: string, fileType: string) => {
-  return new Promise(((resolve, reject) => {
-    readdirAsync(sourceFilesPath).then((filenames) => {
-        let filesPath = checkOccurence(filenames, fileType)
-        if (filesPath.length == 0)
-            resolve({ succeed: false, fileType: fileType, message: 'non sono presenti file'})
-        return Promise.all(filesPath.map(getFile))
-    }).then((files) => {
-        let summaryFiles = []
-        let rowWithMoreColumns = { rowLength: 0, row: [] }
-        files.forEach((file, i) => {
-          file.forEach((row, i) => {
-            if (Object.keys(row).length > rowWithMoreColumns.rowLength) {
-              rowWithMoreColumns.rowLength = Object.keys(row).length
-              rowWithMoreColumns.row = row
-            }
-            summaryFiles.push(row)
-          })
-        })
-        
-        summaryFiles = summaryFiles.sort((a,b) => {
-          return new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime()
-        })
-        
-        try {
-          if (summaryFiles.length > 0) {
-            let csv = convertCollectionToCsv(summaryFiles, rowWithMoreColumns)
-            
-            if (csv) {
-              fs.appendFile(`${config.destinationFilesPath}result${fileType}.csv`, csv, function(err) {
-                  if (err)
-                      reject({ succeed: false, fileType: fileType, message: err})
-                  else 
-                      resolve({ succeed: true, fileType: fileType, message: 'creato con successo'})
-              })              
-            } else {
-              reject({ succeed: false, fileType: fileType, message: 'errore'})
-            }
-          }
-        } catch (e) {
-          reject({ succeed: false, fileType: fileType, message: e})
-        }
-    }).catch(function (e) {
-      reject({ succeed: false, fileType: fileType, message: e})
-    })
-  }))
-})
-
 export const createOnError = ((err: Object, path: string) => {
-  console.log(colors.red('**************************** Error ****************************\n'))
+  console.log(colors.red('---------------------------- Error ----------------------------\n'))
   console.log(`Errore nella lettura della cartella ${path}\n`)
   console.log(err)
-  console.log(colors.red('\n***************************************************************'))
+  console.log(colors.red('\n---------------------------------------------------------------'))
   inquirer
     .prompt(questions[2])
     .then(function (answers) {
