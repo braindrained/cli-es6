@@ -56,13 +56,17 @@ Eseguire i seguenti comandi:
 1. Help ritorna la lista dei comandi eseguibili:
 
         $ cli-es6 -help
-        //oppure
+        // oppure
         $ cli-es6 -h
         
 2. Check verifica i files nelle directory:
 
         $ cli-es6 check
+        // oppure
+        $ cli-es6 ck
         
 3. Run esegue programma:
 
         $ cli-es6 run
+        // oppure
+        $ cli-es6 r
