@@ -22,18 +22,19 @@ export const elaborateFile = ((inputFile: string, delimiter: string, callback: F
           obj[header[x].trim()] = item.trim()
         })
         
-        try {
+        if (obj.Params != '{}') {
           let params = JSON.parse(obj.Params.replace(/{ /g, '{ "').replace(/ : /g, '": "').replace(/;  /g, '","').replace(/}/g, '"}'))
           obj = Object.assign({},obj, params)
           
-          delete obj["Params"]
-        } catch (e) {
+          delete obj["Params"]            
+        } else {
           obj = Object.assign({},obj, {})
           
           delete obj["Params"]
         }
         
-        obj = Object.assign({},obj, { Publisher: inputFile.replace('./files/origin/', '').replace('.csv', '') })
+        let publisher = inputFile.replace('./files/origin/', '').replace('.csv', '').split('_')
+        obj = Object.assign({},obj, { Publisher: `${publisher[1]}_${publisher[2]}` })
         arrayList.push(obj)
       })
 

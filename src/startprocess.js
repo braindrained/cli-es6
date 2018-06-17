@@ -7,7 +7,7 @@ import { checkOccurence, questions, elaborateByType } from './utils'
 export const startProcess = (() => {
   inquirer
     .prompt(questions[1])
-    .then(function (answers) {
+    .then(answers => {
       if (answers.operation != 'Tutti') {
         elaborateByType(config.sourceFilesPath, answers.operation)
       } else {
