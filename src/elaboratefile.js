@@ -9,8 +9,8 @@ export const elaborateFile = ((inputFile: string, delimiter: string, callback: F
     } else {
       console.log(`lettura file: ${inputFile}, righe: ${data.length}`)
       let arrayList = []
-      
       let header = []
+      
       data[0].forEach((item) => {
         header.push(item.replace(/\s/,''))
       })
@@ -26,7 +26,7 @@ export const elaborateFile = ((inputFile: string, delimiter: string, callback: F
           let params = JSON.parse(obj.Params.replace(/{ /g, '{ "').replace(/ : /g, '": "').replace(/;  /g, '","').replace(/}/g, '"}'))
           obj = Object.assign({},obj, params)
           
-          delete obj["Params"]            
+          delete obj["Params"]
         } else {
           obj = Object.assign({},obj, {})
           
