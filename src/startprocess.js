@@ -4,16 +4,14 @@ import inquirer from 'inquirer'
 import config from './config'
 import { checkOccurence, questions, elaborateByType } from './utils'
 
-export const startProcess = (() => {
+export const startProcess = () => {
   inquirer
     .prompt(questions[1])
     .then(answers => {
-      if (answers.operation != 'Tutti') {
-        elaborateByType(config.sourceFilesPath, answers.operation)
+      if (answers.operation == 'Yes') {
+        elaborateByType(config.sourceFilesPath)
       } else {
-        elaborateByType(config.sourceFilesPath, 'Android').then(() => {
-          elaborateByType(config.sourceFilesPath, 'iOs')
-        })
+        process.exit()
       }
     })
-})
+}

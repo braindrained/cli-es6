@@ -1,27 +1,17 @@
 // @flow
 import fs from 'fs'
 import config from './config'
-import { readdirAsync, readFileAsync, convertToCsv, checkOccurence } from './utils'
+import { readdirAsync, readFileAsync, convertToCsv, formatDate } from './utils'
 
-export const processFiles = ((sourceFilesPath: string, fileType: string) => {
+export const processFiles = (sourceFilesPath: string) => {
   return new Promise(((resolve, reject) => {
     readdirAsync(sourceFilesPath).then((filenames) => {
-      try {
-        let filesPath = checkOccurence(filenames, fileType)
-        if (filesPath.length == 0) {
-          reject({ succeed: false, fileType: fileType, message: 'non sono presenti file validi'})
-        } else {
-          return Promise.all(filesPath.map(readFileAsync))
-        }
-      } catch (e) {
-        reject({ succeed: false, fileType: fileType, message: e})
-      }
+      return Promise.all(filenames.map(readFileAsync))
     }).then((files) => {
         try {
-
           if (files && files.length > 0) {
-            let summaryFiles = []
-            let rowWithMoreColumns = { rowLength: 0, row: [] }
+            let summaryFiles = [],
+            rowWithMoreColumns = { rowLength: 0, row: [] }
             
             files.forEach((file) => {
               file.forEach((row) => {
@@ -33,29 +23,31 @@ export const processFiles = ((sourceFilesPath: string, fileType: string) => {
               })
             })
             
-            summaryFiles = summaryFiles.sort((a,b) => {
+            // TO DO: inquirer return column names and let order by type
+            /*summaryFiles = summaryFiles.sort((a,b) => {
               return new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime()
-            })
+            })*/
           
             let csv = convertToCsv(summaryFiles, rowWithMoreColumns)
             
             if (csv) {
-              fs.appendFile(`${config.destinationFilesPath}result${fileType}.csv`, csv, (err) => {
+              const fileName = `result-${formatDate(new Date())}`
+              fs.appendFile(`${config.destinationFilesPath}${fileName}.csv`, csv, (err) => {
                   if (err) {
-                    reject({ succeed: false, fileType: fileType, message: err})
+                    reject({ succeed: false, errorcode: 1, message: err})
                   } else {
-                    resolve({ succeed: true, fileType: fileType, message: 'creato con successo'})
+                    resolve({ succeed: true, errorcode: 0, message: `${fileName} successfully created`})
                   }
               })              
             } else {
-              reject({ succeed: false, fileType: fileType, message: 'errore'})
+              reject({ succeed: false, errorcode: 3, message: 'error'})
             }
           }
         } catch (e) {
-          reject({ succeed: false, fileType: fileType, message: e})
+          reject({ succeed: false, errorcode: 4, message: e})
         }
     }).catch((e) => {
-      reject({ succeed: false, fileType: fileType, message: e})
+      reject({ succeed: false, errorcode: 5, message: e})
     })
   }))
-})
+}

@@ -1,50 +1,50 @@
 # cli-es6
-Command line tool per leggere file csv
+Command line tool that read and mount csv files
 
-Requisiti di sistema
+To start
 -----------
-1. Installa Node.js.
+1. Install Node.
    https://nodejs.org/en/download/.
    
-2. Installa Yarn.
+2. Install Yarn.
    https://yarnpkg.com/en/docs/install
 
-Installazione, controllo codice, build
+Install, check code, build
 ----------
 
-1. Clona progetto e installa dipendenze:
+1. Clone and install dependencies:
          
         $ git clone git@github.com:braindrained/cli-es6.git cli-es6
         $ yarn
 
-2. Esegui check in ambiente di sviluppo:
+2. Check in dev environment:
 
         $ yarn start check
-        // oppure 
+        // or 
         $ yarn start ck
 
-3. Esegui elaborazione files in ambiente di sviluppo:
+3. Run in dev environment:
 
         $ yarn start run
-        // oppure 
+        // or 
         $ yarn start r
 
-4. Controllo codice:
+4. Check code:
 
         $ yarn test
 
-5. Esegui build:
+5. Build:
 
         $ yarn build
         
-6. Installazione:
+6. Install globally:
 
         $ npm install -g
 
-Utilizzo una volta installato
+Once installed
 -----------
 
-Creare la cartella **files** contenente le due cartelle **origin** e **destination**.
+Create the directories:
 
 ```
 .
@@ -53,24 +53,24 @@ Creare la cartella **files** contenente le due cartelle **origin** e **destinati
     └── origin
 ```     
 
-Copiare nella cartella origin i file da elaborare.
+Copy in origin the files to process.
 
-Descrizione comandi:
+Comands:
 
-1. Help ritorna la lista dei comandi eseguibili:
+1. Help:
 
         $ cli-es6 -help
-        // oppure
+        // or
         $ cli-es6 -h
         
-2. Check verifica i files nelle directory:
+2. Check:
 
         $ cli-es6 check
-        // oppure
+        // or
         $ cli-es6 ck
         
-3. Run esegue programma:
+3. Run:
 
         $ cli-es6 run
-        // oppure
+        // or
         $ cli-es6 r

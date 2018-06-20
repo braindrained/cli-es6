@@ -12,9 +12,9 @@ export const checkOccurence = (array: Array<string>, value: string): Array<strin
 }
 
 export const questions = [
-  { type: 'list', name: 'check', message: 'la cartella di destinazione non è vuota, cancellare i file presenti?', choices: ['Sì', 'No'] },
-  { type: 'list', name: 'operation', message: 'Scegli file da processare', choices: ['Android', 'iOs', 'Tutti'] },
-  { type: 'list', name: 'check', message: 'Le cartelle non esistono, vuoi crearle?', choices: ['Sì', 'No'] }
+  { type: 'list', name: 'check', message: 'The destination directory is not empty, delete files?', choices: ['Yes', 'No'] },
+  { type: 'list', name: 'operation', message: 'Do you want to proceed?', choices: ['Yes', 'No'] },
+  { type: 'list', name: 'check', message: 'Directories does not exist, do you want to create them?', choices: ['Yes', 'No'] }
 ]
 
 export const deleteFilesAsync = (dirname: string) => {
@@ -98,40 +98,57 @@ const isInteger = (str: string) => {
     return n !== Infinity && String(n) === str && n >= 0
 }
 
-export const elaborateByType = (sourceFilesPath: string, fileType: string) => {
-  return new Promise((resolve, reject) => {
-    console.log(colors.blue(`------------------------ ${colors.white(fileType + ' files')} ------------------------\n`))
-    processFiles(sourceFilesPath, fileType).then((result) => {
-      console.log('\n')
-      if (result.succeed) {
-        console.log('%s %s %s', 'File', colors.blue(result.fileType), result.message)
+export const startProcess = (sourceFilesPath: string) => {
+  inquirer
+    .prompt(questions[1])
+    .then(answers => {
+      if (answers.operation == 'Yes') {
+        console.log(colors.blue(`------------------------ ${colors.white(' files')} ------------------------\n`))
+        processFiles(sourceFilesPath).then((result) => {
+          console.log('\n')
+          if (result.succeed) {
+            console.log('%s %s', 'File', result.message)
+          } else {
+            console.log(result)
+          }
+          console.log(colors.blue('\n---------------------------------------------------------------'))
+        }).catch((e) => {
+          console.log(e)
+        })
       } else {
-        console.log(result)
+        process.exit()
       }
-      console.log(colors.blue('\n---------------------------------------------------------------'))
-      resolve()
-    }).catch((e) => {
-      console.log(e)
     })
-  })
 }
 
 export const createOnError = (err: Object, path: string) => {
   console.log(colors.red(`---------------------------- ${colors.white('Error')} ----------------------------\n`))
-  console.log(`Errore nella lettura della cartella ${path}\n`)
+  console.log(`Error reading directory ${path}\n`)
   console.log(err)
   console.log(colors.red('\n---------------------------------------------------------------'))
   inquirer
     .prompt(questions[2])
     .then((answers) => {
-      if (answers.check == 'Sì') {
+      if (answers.check == 'Yes') {
         child_process.exec('mkdir files files/origin files/destination', (err, stdout, stderr) => {
           if (err) {
-            console.log(`Errore nella creazione delle directory: ${err}`)
+            console.log(`Error creating directory: ${err}`)
           } else {
-            console.log('Cartelle create correttamente, inserisci i files csv nella cartella origin e riesegui il programma')
+            console.log('Directory successfully created, put your files in the origin directory and run the program')
           }
         })
       }
     })
+}
+
+export const formatDate = (date) => {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
 }

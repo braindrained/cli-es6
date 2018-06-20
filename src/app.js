@@ -7,8 +7,7 @@ import inquirer from 'inquirer'
 import child_process from 'child_process'
 
 import config from './config'
-import { startProcess } from './startprocess'
-import { checkOccurence, questions, readdirAsync, deleteFilesAsync, createOnError } from './utils'
+import { checkOccurence, questions, readdirAsync, deleteFilesAsync, createOnError, startProcess } from './utils'
 
 program
   .command('check')
@@ -20,19 +19,16 @@ program
         createOnError(err, config.sourceFilesPath)
       } else {
         if (files.length != 0) {
-          console.log(colors.blue(`------------------------ ${colors.white('Elenco files')} ------------------------\n`))
+          console.log(colors.blue(`------------------------ ${colors.white('Files')} ------------------------\n`))
           files.forEach((file, i) => {
-            let deviceFile = file.indexOf('Android') != -1 ? 'Android' : file.indexOf('iOs') != -1 ? 'iOs' : 'unknown'
-            console.log('%s %s %s %s %s', colors.bold(i+1), '-', colors.yellow(deviceFile) , '-', colors.blue(file))
+            console.log('%s %s %s', colors.bold(i+1), '-', colors.blue(file))
           })
           console.log(colors.blue('\n---------------------------------------------------------------\n'))
-          console.log('Files Android:', colors.yellow(checkOccurence(files, 'Android').length))
-          console.log('Files iOs:', colors.yellow(checkOccurence(files, 'iOs').length))
-          console.log('Files Sconosciuti:', colors.yellow(checkOccurence(files, 'unknown').length))
+          console.log('Files to process:', colors.yellow(files.length))
           console.log(colors.blue('\n---------------------------------------------------------------'))
         } else {
           console.log(colors.red(`---------------------------- ${colors.white('Warning')} ----------------------------\n`))
-          console.log(`Non sono presenti files, controlla il contenuto della cartella ${config.sourceFilesPath}`)
+          console.log(`There's no files, check the content of ${config.sourceFilesPath} directory`)
           console.log(colors.red('\n---------------------------------------------------------------'))
         }
       }
@@ -46,17 +42,13 @@ program
   .action(() => {
     readdirAsync(config.sourceFilesPath).then((files) => {
       if (files.length != 0) {
-        console.log(colors.blue(`------------------------ ${colors.white('Elenco files')} ------------------------\n`))
+        console.log(colors.blue(`------------------------ ${colors.white('Files')} ------------------------\n`))
         let deviceFiles = []
         files.forEach((file, i) => {
-          let deviceFile = file.indexOf('Android') != -1 ? 'Android' : file.indexOf('iOs') != -1 ? 'iOs' : 'unknown'
-          deviceFiles.push(deviceFile)
-          console.log('%s %s %s %s %s', colors.bold(i+1), '-', colors.yellow(deviceFile) , '-', colors.blue(file))
+          console.log('%s %s %s', colors.bold(i+1), '-', colors.blue(file))
         })
         console.log(colors.blue('\n---------------------------------------------------------------\n'))
-        console.log('Files Android:', colors.yellow(checkOccurence(deviceFiles, 'Android').length))
-        console.log('Files iOs:', colors.yellow(checkOccurence(deviceFiles, 'iOs').length))
-        console.log('Files Sconosciuti:', colors.yellow(checkOccurence(deviceFiles, 'unknown').length))
+        console.log('Files to process:', colors.yellow(files.length))
         console.log(colors.blue('\n---------------------------------------------------------------'))
         
         readdirAsync(config.destinationFilesPath).then((filenames) => {
@@ -64,33 +56,32 @@ program
             inquirer
               .prompt(questions[0])
               .then((answers) => {
-                if (answers.check == 'Sì') {
+                if (answers.check == 'Yes') {
                   return Promise.all(filenames.map(deleteFilesAsync))
                 } else {
                   return Promise.all([])
                 }
               }).then((files) => {
                 if (files.length != 0) {
-                  console.log('\nElenco file cancellati')
+                  console.log('\nDeleted files list')
                   files.forEach((item) => {
                     console.log(item)
                   })
                   console.log('\n')
-                  startProcess()
+                  startProcess(config.sourceFilesPath)
                 } else {
                   process.exit()
                 }
               })
           } else {
-            startProcess()
+            startProcess(config.sourceFilesPath)
           }
         }).catch((err) => {
           createOnError(err, config.destinationFilesPath)
         })
-        
       } else {
         console.log(colors.red(`---------------------------- ${colors.white('Warnin')} ----------------------------\n`))
-        console.log(`Non sono presenti files, controlla il contenuto della cartella ${config.sourceFilesPath}`)
+        console.log(`There's no files, check the content of ${config.sourceFilesPath} directory`)
         console.log(colors.red('\n---------------------------------------------------------------'))
       }
     }).catch((err) => {
