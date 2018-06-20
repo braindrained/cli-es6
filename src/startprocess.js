@@ -2,7 +2,7 @@
 import colors from 'colors'
 import inquirer from 'inquirer'
 import config from './config'
-import { checkOccurence, questions, elaborateByType } from './utils'
+import { checkOccurence, questions } from './utils'
 
 export const startProcess = () => {
   inquirer

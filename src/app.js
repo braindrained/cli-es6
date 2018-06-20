@@ -7,22 +7,25 @@ import inquirer from 'inquirer'
 import child_process from 'child_process'
 
 import config from './config'
-import { checkOccurence, questions, readdirAsync, deleteFilesAsync, createOnError, startProcess } from './utils'
+import { checkOccurence, questions, readdirAsync, deleteFilesAsync, createOnError, startProcess, table } from './utils'
 
 program
   .command('check')
   .alias('ck')
-  .description('Controlla lista dei files')
+  .description('Check files list')
   .action(() => {
     fs.readdir(config.sourceFilesPath, (err, files) => {
       if (err) {
         createOnError(err, config.sourceFilesPath)
       } else {
         if (files.length != 0) {
-          console.log(colors.blue(`------------------------ ${colors.white('Files')} ------------------------\n`))
+          console.log(colors.blue(`------------------------ ${colors.white('Files to process')} ------------------------\n`))
+
           files.forEach((file, i) => {
-            console.log('%s %s %s', colors.bold(i+1), '-', colors.blue(file))
+            table.push([colors.bold(i+1), colors.yellow(file)])
           })
+          console.log(table.toString())
+
           console.log(colors.blue('\n---------------------------------------------------------------\n'))
           console.log('Files to process:', colors.yellow(files.length))
           console.log(colors.blue('\n---------------------------------------------------------------'))
@@ -38,19 +41,21 @@ program
 program
   .command('run')
   .alias('r')
-  .description('Esegue elaborazione files')
+  .description('Run files elaboration')
   .action(() => {
     readdirAsync(config.sourceFilesPath).then((files) => {
       if (files.length != 0) {
         console.log(colors.blue(`------------------------ ${colors.white('Files')} ------------------------\n`))
-        let deviceFiles = []
+
         files.forEach((file, i) => {
-          console.log('%s %s %s', colors.bold(i+1), '-', colors.blue(file))
+          table.push([colors.bold(i+1), colors.yellow(file)])
         })
+        console.log(table.toString())
+
         console.log(colors.blue('\n---------------------------------------------------------------\n'))
         console.log('Files to process:', colors.yellow(files.length))
         console.log(colors.blue('\n---------------------------------------------------------------'))
-        
+
         readdirAsync(config.destinationFilesPath).then((filenames) => {
           if (filenames.length !=0) {
             inquirer
@@ -88,5 +93,5 @@ program
       createOnError(err, config.sourceFilesPath)
     })
   })
-    
+
 program.parse(process.argv)

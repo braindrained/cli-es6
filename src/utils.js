@@ -3,6 +3,8 @@ import fs from 'fs'
 import colors from 'colors'
 import inquirer from 'inquirer'
 import child_process from 'child_process'
+import Table from 'cli-table'
+
 import config from './config'
 import { elaborateFile } from './elaboratefile'
 import { processFiles } from './processfiles'
@@ -10,6 +12,13 @@ import { processFiles } from './processfiles'
 export const checkOccurence = (array: Array<string>, value: string): Array<string> => {
   return array.filter((val) => { return val.indexOf(value) != -1 })
 }
+
+export const table = new Table({
+  chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
+         , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝'
+         , 'left': '║' , 'left-mid': '╟' , 'mid': '─' , 'mid-mid': '┼'
+         , 'right': '║' , 'right-mid': '╢' , 'middle': '│' }
+})
 
 export const questions = [
   { type: 'list', name: 'check', message: 'The destination directory is not empty, delete files?', choices: ['Yes', 'No'] },
@@ -61,7 +70,7 @@ export const convertToCsv = (docs: Array<Object>, rowWithMoreColumns: Object) =>
   if (!(Array.isArray(docs) && docs.length > 0)) {
     return
   }
-  
+
   let header = Object.keys(rowWithMoreColumns.row).join(",")
 
   let body = docs.map((obj) => {
@@ -84,7 +93,7 @@ export const convertToCsv = (docs: Array<Object>, rowWithMoreColumns: Object) =>
 
     return values.join(',')
   })
-    
+
   let csv = []
     .concat([header])
     .concat(body)
@@ -94,8 +103,8 @@ export const convertToCsv = (docs: Array<Object>, rowWithMoreColumns: Object) =>
 }
 
 const isInteger = (str: string) => {
-    var n = Math.floor(Number(str))
-    return n !== Infinity && String(n) === str && n >= 0
+  //return (!isNaN(str)
+  return +str === +str
 }
 
 export const startProcess = (sourceFilesPath: string) => {
@@ -141,14 +150,14 @@ export const createOnError = (err: Object, path: string) => {
     })
 }
 
-export const formatDate = (date) => {
+export const formatDate = (date: string) => {
     let d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
-        year = d.getFullYear();
+        year = d.getFullYear()
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
+    if (month.length < 2) month = '0' + month
+    if (day.length < 2) day = '0' + day
 
-    return [year, month, day].join('-');
+    return [year, month, day].join('-')
 }

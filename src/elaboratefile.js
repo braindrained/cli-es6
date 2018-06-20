@@ -1,6 +1,9 @@
 // @flow
 import fs from 'fs'
 import parse from 'csv-parse'
+import colors from 'colors'
+
+import { table } from './utils'
 
 export const elaborateFile = (inputFile: string, delimiter: string, callback: Function) => {
   const parser = parse({ delimiter: delimiter }, (err, data) => {
@@ -8,9 +11,10 @@ export const elaborateFile = (inputFile: string, delimiter: string, callback: Fu
       console.log('Error')
     } else {
       console.log(`Reading file: ${inputFile}, rows count: ${data.length}`)
+
       let arrayList = []
       let header = []
-      
+
       data[0].forEach((item) => {
         header.push(item.replace(/\s/,''))
       })
@@ -21,7 +25,7 @@ export const elaborateFile = (inputFile: string, delimiter: string, callback: Fu
         line.forEach((item, x) => {
           obj[header[x].trim()] = item.trim()
         })
-        
+
         arrayList.push(obj)
       })
 
