@@ -55,7 +55,7 @@ Create the directories:
 
 Copy in origin the files to process.
 
-Comands:
+Commands:
 
 1. Help:
 
